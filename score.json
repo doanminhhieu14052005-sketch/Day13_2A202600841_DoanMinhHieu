@@ -1,21 +1,21 @@
 {
   "team": "2A202600841_DoanMinhHieu",
-  "phase": "public",
-  "headline": 88.64,
+  "phase": "private",
+  "headline": 67.08,
   "sub": {
-    "correct": 0.5433,
-    "quality": 0.7241,
-    "error": 1.0,
-    "latency": 0.4037,
-    "cost": 1.0,
-    "drift": 0.2469,
-    "prompt": 0.7842
+    "correct": 0.2325,
+    "quality": 0.5354,
+    "error": 0.9875,
+    "latency": 0.5812,
+    "cost": 0.0,
+    "drift": 0.5487,
+    "prompt": 0.5167
   },
-  "diag_f1": 0.952,
-  "n": 120,
-  "n_correct": 61,
+  "diag_f1": 1.0,
+  "n": 80,
+  "n_correct": 12,
   "judge_mode": "offline",
   "weights_hash": "e81a8ed58d93",
-  "key_hash": "9a800fa6968d",
-  "sig": "cf312a479b81eb1b40dbb83ae606ae26fda977826b882ad6fcf18f38b81ae196"
+  "key_hash": "7e3905b75db0",
+  "sig": "37a588264bd2b0e8b368455dd2b1d61abb9be192b2e90e4e6446b483b9b0fda5"
 }
