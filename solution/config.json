@@ -20,6 +20,6 @@
   "route_rules": [],
   "planner": false,
   "verify": true,
-  "self_consistency": 2,
+  "self_consistency": 3,
   "tool_budget": 4
 }

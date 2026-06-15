@@ -66,6 +66,43 @@ def _sanitize(question):
     return question
 
 
+# --- total-line normaliser: salvage answers that are arithmetically right but mis-formatted -
+_CUR = r"(?:VN[ĐD]|vnd|đồng|dong|đ)"
+_AMT = r"\d{1,3}(?:[.,\s]\d{3})+|\d+"
+_TOTAL_KW = re.compile(r"(?i)t[oổ]ng|thanh\s*to[aá]n|ph[aả]i\s*tr[aả]|total|c[oộ]ng")
+_AMT_CUR = re.compile(r"(" + _AMT + r")\s*" + _CUR, re.IGNORECASE)
+
+
+def _extract_total(ans):
+    """Return the order total as an int, or None for refusals / no parseable amount.
+    Only numbers ADJACENT to a currency token count (so refusals are never mistaken for a
+    total), preferring one preceded by a 'total' keyword over a subtotal/shipping amount."""
+    amts = list(_AMT_CUR.finditer(ans))
+    if not amts:
+        return None
+    for m in reversed(amts):
+        pre = ans[max(0, m.start() - 25):m.start()]
+        if _TOTAL_KW.search(pre):
+            d = re.sub(r"\D", "", m.group(1))
+            return int(d) if d else None
+    d = re.sub(r"\D", "", amts[-1].group(1))
+    return int(d) if d else None
+
+
+def _normalize_total(ans):
+    """Ensure a valid-order answer ends with the canonical, parseable total line. Refusals
+    (no amount) are returned unchanged so we never fabricate a total."""
+    if not isinstance(ans, str) or not ans.strip():
+        return ans
+    total = _extract_total(ans)
+    if total is None:
+        return ans
+    canonical = "Tong cong: {} VND".format(total)
+    if ans.rstrip().endswith(canonical):
+        return ans
+    return ans.rstrip() + "\n" + canonical
+
+
 def _is_bad(result):
     """A result worth retrying: missing, wrapper error, or no answer produced."""
     if result is None:
@@ -115,14 +152,15 @@ def mitigate(call_next, question, config, context):
 
     wall_ms = int((time.time() - t0) * 1000)
 
-    # --- output PII redaction (defence in depth; the prompt already forbids echoing) -
+    # --- output cleanup: redact any leaked PII, then canonicalise the total line --------
     pii_count = 0
     ans = result.get("answer")
     if isinstance(ans, str):
-        red, pii_count = redact(ans)
-        if pii_count:
+        red, pii_count = redact(ans)              # defence in depth (prompt already forbids PII)
+        fixed = _normalize_total(red)             # salvage right-math / wrong-format answers
+        if fixed != ans:
             result = dict(result)
-            result["answer"] = red
+            result["answer"] = fixed
 
     # --- observability: the ONLY place these signals exist --------------------------
     meta = result.get("meta", {}) or {}
