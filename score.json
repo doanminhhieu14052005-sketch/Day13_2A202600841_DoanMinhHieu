@@ -1,0 +1,21 @@
+{
+  "team": "2A202600841_DoanMinhHieu",
+  "phase": "public",
+  "headline": 88.64,
+  "sub": {
+    "correct": 0.5433,
+    "quality": 0.7241,
+    "error": 1.0,
+    "latency": 0.4037,
+    "cost": 1.0,
+    "drift": 0.2469,
+    "prompt": 0.7842
+  },
+  "diag_f1": 0.952,
+  "n": 120,
+  "n_correct": 61,
+  "judge_mode": "offline",
+  "weights_hash": "e81a8ed58d93",
+  "key_hash": "9a800fa6968d",
+  "sig": "cf312a479b81eb1b40dbb83ae606ae26fda977826b882ad6fcf18f38b81ae196"
+}
